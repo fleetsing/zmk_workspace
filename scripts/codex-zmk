@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${ZMK_ROOT:-$HOME/zmk}"
+CODEX_HOME_DIR="$ROOT/zmk_workspace/.codex"
+
+cmd=(codex -C "$ROOT/zmk_workspace" --full-auto)
+if [[ -d "$ROOT/zmk_config" ]]; then
+  cmd+=(--add-dir "$ROOT/zmk_config")
+fi
+if [[ -d "$ROOT/zmk_modules" ]]; then
+  cmd+=(--add-dir "$ROOT/zmk_modules")
+fi
+
+exec env CODEX_HOME="$CODEX_HOME_DIR" "${cmd[@]}" "$@"

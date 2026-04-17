@@ -1,0 +1,22 @@
+# Dedicated Codex home for the ZMK workspace.
+# Keep project rules in ../AGENTS.md and ../docs/project-context.md.
+
+model = "gpt-5.4"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "cached"
+project_doc_max_bytes = 65536
+file_opener = "vscode"
+
+[sandbox_workspace_write]
+network_access = false
+writable_roots = []
+
+[profiles.zmk-research]
+web_search = "live"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.zmk-research.sandbox_workspace_write]
+network_access = true
+writable_roots = []
