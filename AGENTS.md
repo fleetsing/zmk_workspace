@@ -5,10 +5,12 @@ Read [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zm
 ## Working directory model
 
 - This repo, `zmk_workspace`, is the main agent entrypoint.
-- Normal agent sessions should start here and add sibling access to:
+- Normal agent sessions should start from the `zmk_workspace` directory itself.
+- Treat these sibling paths as in-scope project directories:
   - `../zmk_config`
   - `../zmk`
   - `../zmk_modules`
+- If the local Codex client honors `zmk_workspace/.codex/config.toml`, those sibling directories should be writable roots for a normal session started here.
 
 ## Repository boundaries
 
@@ -37,6 +39,7 @@ Read [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zm
 - Prefer GitHub Actions builds from `../zmk_config` for routine firmware generation.
 - Keep the workflow pin aligned with the ZMK pin in `../zmk_config/config/west.yml`.
 - Use local builds mainly for CI debugging, module development, or migration work.
+- For local builds, prefer `./scripts/build-local-firmware.sh` from this repo so `../zmk_config` stays free of `.west/` workspace state.
 
 ## Documentation policy
 

@@ -38,4 +38,6 @@ Next steps:
        $ROOT/zmk_config/build.yaml
   3. Start Codex with:
        $ROOT/zmk_workspace/scripts/codex-zmk
+  4. Verify the local build path with:
+       $ROOT/zmk_workspace/scripts/build-local-firmware.sh all
 EOF

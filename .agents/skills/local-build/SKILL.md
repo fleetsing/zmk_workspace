@@ -16,42 +16,31 @@ Run or propose local build commands for the Totem workspace without treating `..
 
 ## Canonical commands
 
-### Prepare local checkout
+### Build both halves
 
 ```bash
-cd ~/zmk/zmk
-python3 -m venv .venv
-source .venv/bin/activate
-pip install west
-west init -l app/
-west update
-west zephyr-export
-west packages pip --install
+cd ~/zmk/zmk_workspace
+./scripts/build-local-firmware.sh all
 ```
 
-### Build Totem left
+### Build one half
 
 ```bash
-cd ~/zmk/zmk/app
-west build -d build/totem-left -b seeeduino_xiao_ble -- \
-  -DSHIELD=totem_left \
-  -DZMK_CONFIG="$HOME/zmk/zmk_config/config"
+cd ~/zmk/zmk_workspace
+./scripts/build-local-firmware.sh left
+./scripts/build-local-firmware.sh right
 ```
 
-### Build Totem left with modules
+### Reuse an existing fetched workspace
 
 ```bash
-cd ~/zmk/zmk/app
-west build -d build/totem-left -b seeeduino_xiao_ble -- \
-  -DSHIELD=totem_left \
-  -DZMK_CONFIG="$HOME/zmk/zmk_config/config" \
-  -DZMK_EXTRA_MODULES="$HOME/zmk/zmk_modules"
+cd ~/zmk/zmk_workspace
+ZMK_SKIP_UPDATE=1 ./scripts/build-local-firmware.sh all
 ```
-
-Repeat for `totem_right` when needed.
 
 ## Rules
 
 - Do not treat local build success as permission to patch upstream `../zmk`.
 - If a feature is reusable or shield-specific, prefer creating or updating a module under `../zmk_modules`.
 - Keep the local build assumptions aligned with `../zmk_config/config/west.yml` and `../zmk_config/build.yaml`.
+- Prefer the workspace helper over running `west init` inside `../zmk_config`.

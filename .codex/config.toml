@@ -10,7 +10,11 @@ file_opener = "vscode"
 
 [sandbox_workspace_write]
 network_access = false
-writable_roots = []
+writable_roots = [
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_config",
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk",
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_modules",
+]
 
 [profiles.zmk-research]
 web_search = "live"
@@ -19,4 +23,8 @@ sandbox_mode = "workspace-write"
 
 [profiles.zmk-research.sandbox_workspace_write]
 network_access = true
-writable_roots = []
+writable_roots = [
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_config",
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk",
+  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_modules",
+]
