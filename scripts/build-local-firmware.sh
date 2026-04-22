@@ -66,6 +66,7 @@ fi
 
 mkdir -p "$BUILD_ROOT"
 mkdir -p "$ARTIFACT_DIR"
+mkdir -p "$CONFIG_DIR"
 
 if [[ ! -x "$VENV_DIR/bin/python" ]]; then
   "$PYTHON_BIN" -m venv "$VENV_DIR"
@@ -89,17 +90,7 @@ fi
 
 rsync -a --delete \
   --exclude '.git/' \
-  --exclude '.venv/' \
-  --exclude '.west/' \
-  --exclude 'build/' \
-  --exclude 'bootloader/' \
-  --exclude 'modules/' \
-  --exclude 'tools/' \
-  --exclude 'zephyr/' \
-  --exclude 'zmk/' \
-  --exclude 'zmk-keyboard-totem/' \
-  --exclude 'zmk-auto-layer/' \
-  "$CONFIG_REPO"/ "$BUILD_ROOT"/
+  "$CONFIG_REPO/config/"/ "$CONFIG_DIR"/
 
 cd "$BUILD_ROOT"
 
