@@ -62,7 +62,7 @@ Each module under `zmk_modules/` should have its own repository.
 - Default modifier ordering and shortcut ergonomics should be optimized for macOS first.
 - A separate PC-oriented config may be added later, so do not assume modifier ordering is permanently cross-platform.
 
-The current `zmk_config/config/west.yml` pulls the Totem shield from an out-of-tree module repo rather than from upstream ZMK. That matches the intended architecture: the shield should come from a module, not from direct edits to `zmk/`.
+The current `zmk_config/config/west.yml` pulls the Totem shield from an out-of-tree module repo rather than from upstream ZMK, and also pins the `urob/zmk-auto-layer` module for smart layer behaviors. That matches the intended architecture: reusable firmware features should come from modules, not from direct edits to `zmk/`.
 
 ## Source-of-truth split
 
@@ -135,6 +135,17 @@ To preserve it:
 - avoid excessive preprocessor indirection in the main keymap
 - move editor-hostile reusable logic into modules when it stops being pleasant in the keymap
 
+## Current Totem config state
+
+- `config/totem.keymap` currently defines ten layers:
+  `MacOS`, `PC`, `Nav`, `Nav `, `Num`, `Num `, `Fun`, `Fun `, `Media`, and `Board`.
+- The `PC` layer is a transparent modifier-swap overlay for the base layer, and `Nav `, `Num `, and `Fun ` are matching transparent overlays activated through conditional layers when `PC` is held with `Nav`, `Num`, or `Fun`.
+- The Nav and Num layer combos now use auto-layer behaviors so those layers self-cancel once typing leaves their intended key sets.
+- The main layout uses direct in-file behavior definitions for `Meh` and `Hyper` macros plus six positional hold-tap helpers: left/right home-row mods and left/right bottom-row `Meh`/`Hyper` hold-taps.
+- Hold-tap tuning is currently shared across those helpers with `balanced`, `quick-tap-ms`, `require-prior-idle-ms`, `retro-tap`, and `hold-trigger-on-release`, with opposite-hand and thumb positions used as hold triggers.
+- `config/totem_left.conf` only disables USB logging, while `config/totem_right.conf` additionally disables the USB stack for the peripheral half.
+- `config/totem.json` remains the layout metadata source for the 38-key Totem geometry used by Keymap Editor and keymap-drawer.
+
 ## keymap-drawer model
 
 Visualization is generated from `zmk_config` using the reusable `caksoylar/keymap-drawer` workflow.
@@ -157,11 +168,12 @@ cd ~/zmk/zmk_workspace
 
 What the helper does:
 
-- creates or reuses an isolated west workspace under `/tmp/zmk-local-build`
+- creates or reuses an isolated west workspace under `${TMPDIR:-/tmp}/zmk-local-build` unless `ZMK_BUILD_ROOT` is set
 - syncs the current `zmk_config` repo into that disposable workspace
 - installs `west`, `ninja`, and `pyelftools` into a local virtualenv
 - prepends that virtualenv to `PATH` so the helper uses the same local `west` and `ninja`
 - runs `west update` and the Totem builds
+- copies the resulting UF2 files into `zmk_workspace/artifacts/firmware/` unless `ZMK_ARTIFACT_DIR` is set
 - auto-detects a Homebrew-style `arm-none-eabi-gcc` toolchain and exports `gnuarmemb` settings when possible
 
 Useful variants:
@@ -171,9 +183,11 @@ Useful variants:
 ./scripts/build-local-firmware.sh right
 ZMK_SKIP_UPDATE=1 ./scripts/build-local-firmware.sh all
 ZMK_SKIP_UPDATE=1 ZMK_SKIP_PIP=1 ./scripts/build-local-firmware.sh all
+ZMK_ARTIFACT_DIR=$PWD/firmware ./scripts/build-local-firmware.sh all
 ```
 
 Use `ZMK_SKIP_UPDATE=1` when reusing an already-fetched disposable workspace and you only want to confirm a config change locally without refetching dependencies.
+Use `ZMK_ARTIFACT_DIR` when you want the flashable UF2 files copied somewhere other than the default workspace-local artifact folder.
 
 In restricted sessions, the first run also needs network access so the disposable west workspace can fetch ZMK dependencies. Once that workspace has been populated, `ZMK_SKIP_UPDATE=1` can be used for local rebuilds without refetching.
 If the disposable virtualenv already has the required Python packages, `ZMK_SKIP_PIP=1` can also be used to avoid pip refreshes in offline or network-restricted sessions.
@@ -203,12 +217,9 @@ If a new warning appears beyond the above list, treat it as potentially meaningf
 - `../zmk_config/config/totem.json`
 - this file
 
-## Current scaffold state
+## Current workspace state
 
-- `zmk_workspace` now has the project-level docs and agent entrypoint role
-- `zmk_config` has build matrix, west manifest, keymap-drawer workflow, and Totem layout metadata
-- `zmk_config` now has a minimal custom `config/totem.keymap` baseline rather than the original placeholder import
-- home-row mods are being implemented with positional hold-tap tuning in the keymap itself
-- `zmk_config` uses split side-specific Kconfig files: `config/totem_left.conf` and `config/totem_right.conf`
-- `config/totem_right.conf` disables USB for the peripheral half, which keeps the split build valid in local testing and matches the intended runtime role
-- `zmk_modules/` is a container only until module repos are cloned or created
+- `zmk_workspace` owns the project-level docs, agent entrypoint role, local skills, and helper scripts.
+- `zmk_config` owns the live Totem build matrix, west manifest, keymap, side-specific `.conf` files, layout metadata, and GitHub Actions workflows.
+- `zmk_config/config/totem.keymap` is no longer a starter baseline; it is the maintained editor-safe source for the current multi-layer layout and custom hold-tap behavior definitions.
+- `zmk_modules/` is still the place to move reusable or editor-hostile logic once it no longer fits comfortably in the main keymap.

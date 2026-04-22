@@ -23,6 +23,8 @@ cd ~/zmk/zmk_workspace
 ./scripts/build-local-firmware.sh all
 ```
 
+Flashable outputs are copied to `~/zmk/zmk_workspace/artifacts/firmware/` by default.
+
 ### Build one half
 
 ```bash
@@ -38,9 +40,17 @@ cd ~/zmk/zmk_workspace
 ZMK_SKIP_UPDATE=1 ./scripts/build-local-firmware.sh all
 ```
 
+### Override the artifact folder
+
+```bash
+cd ~/zmk/zmk_workspace
+ZMK_ARTIFACT_DIR=$PWD/firmware ./scripts/build-local-firmware.sh all
+```
+
 ## Rules
 
 - Do not treat local build success as permission to patch upstream `../zmk`.
 - If a feature is reusable or shield-specific, prefer creating or updating a module under `../zmk_modules`.
 - Keep the local build assumptions aligned with `../zmk_config/config/west.yml` and `../zmk_config/build.yaml`.
 - Prefer the workspace helper over running `west init` inside `../zmk_config`.
+- Treat the copied UF2 files under `zmk_workspace/artifacts/firmware/` as the normal local flashing outputs unless the task explicitly overrides the artifact directory.

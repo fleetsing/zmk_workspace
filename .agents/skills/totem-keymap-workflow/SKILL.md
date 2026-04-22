@@ -31,8 +31,8 @@ Keep Totem keymap changes aligned with this workspace's actual operating assumpt
 
 - Home-row mods live on the stronger fingers, not the pinkies.
 - Current HRM tuning uses positional hold-tap with `balanced`, `require-prior-idle-ms`, `quick-tap-ms`, `retro-tap`, and `hold-trigger-on-release`.
-- Thumb-based shift behavior is expected to carry shifted shortcuts instead of home-row Shift.
-- Bottom-row `Meh` and `Hyper` follow the same hold-tap tuning style as the HRMs.
+- `Meh` and `Hyper` currently live as bottom-row hold-taps and follow the same tuning style as the HRMs.
+- The current PC support model is transparent overlay layers that only swap the relevant GUI and Control holds instead of duplicating full PC-specific copies of each layer.
 
 ## Checks
 

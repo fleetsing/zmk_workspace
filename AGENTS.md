@@ -40,6 +40,7 @@ Read [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zm
 - Keep the workflow pin aligned with the ZMK pin in `../zmk_config/config/west.yml`.
 - Use local builds mainly for CI debugging, module development, or migration work.
 - For local builds, prefer `./scripts/build-local-firmware.sh` from this repo so `../zmk_config` stays free of `.west/` workspace state.
+- The helper may keep its west workspace in a disposable temp location, but flashable UF2 files should land in a stable local folder under `zmk_workspace/artifacts/firmware/` unless a task explicitly overrides that path.
 
 ## Documentation policy
 

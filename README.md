@@ -60,4 +60,5 @@ Use the workspace helper instead of running `west init` inside `zmk_config`:
 ./scripts/build-local-firmware.sh all
 ```
 
-This mirrors the `zmk_config` manifest in a disposable west workspace under `/tmp/zmk-local-build` by default, so local verification does not leave `.west/` state in the config repo.
+This mirrors the `zmk_config` manifest in a disposable west workspace under `${TMPDIR:-/tmp}/zmk-local-build` by default, so local verification does not leave `.west/` state in the config repo.
+The helper then copies the flashable UF2 files into `artifacts/firmware/` in this repo so they remain easy to find after the build.
