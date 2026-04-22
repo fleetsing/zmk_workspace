@@ -63,7 +63,7 @@ Each module under `zmk_modules/` should have its own repository.
 - Default modifier ordering and shortcut ergonomics should be optimized for macOS first.
 - The current keymap already includes PC-oriented transparent overlay layers, but macOS remains the default baseline for modifier choices and workflow assumptions.
 
-The current `zmk_config/config/west.yml` pulls the Totem shield from an out-of-tree module repo rather than from upstream ZMK, and also pins the `urob/zmk-auto-layer` module for smart layer behaviors. That matches the intended architecture: reusable firmware features should come from modules, not from direct edits to `zmk/`.
+The current `zmk_config/config/west.yml` pins the Totem shield from an out-of-tree module repo rather than from upstream ZMK, and also pins the `urob/zmk-auto-layer` module for smart layer behaviors. That matches the intended architecture: reusable firmware features should come from modules, not from direct edits to `zmk/`.
 
 ## Source-of-truth split
 
