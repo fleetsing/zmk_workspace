@@ -6,10 +6,12 @@ usage() {
 Usage: build-local-firmware.sh [left|right|all]
 
 Build the Totem firmware from the sibling zmk_config repo in a disposable west
-workspace. The default build root is /tmp/zmk-local-build.
+workspace. Flashable UF2 artifacts are copied into zmk_workspace/artifacts/firmware
+by default.
 
 Environment:
   ZMK_BUILD_ROOT      Override the disposable build workspace root.
+  ZMK_ARTIFACT_DIR    Override the local artifact output directory.
   ZMK_SKIP_UPDATE=1   Reuse the existing west workspace without fetching.
   ZMK_SKIP_PIP=1      Skip pip dependency installation after the venv exists.
   ZMK_EXTRA_MODULES   Optional semicolon-separated extra module paths.
@@ -21,6 +23,7 @@ WORKSPACE_REPO="$(cd "$SCRIPT_DIR/.." && pwd)"
 ROOT="$(cd "$WORKSPACE_REPO/.." && pwd)"
 CONFIG_REPO="$ROOT/zmk_config"
 BUILD_ROOT="${ZMK_BUILD_ROOT:-${TMPDIR:-/tmp}/zmk-local-build}"
+ARTIFACT_DIR="${ZMK_ARTIFACT_DIR:-$WORKSPACE_REPO/artifacts/firmware}"
 VENV_DIR="$BUILD_ROOT/.venv"
 CONFIG_DIR="$BUILD_ROOT/config"
 PYTHON_BIN="${PYTHON_BIN:-python3}"
@@ -62,6 +65,7 @@ if ! command -v rsync >/dev/null 2>&1; then
 fi
 
 mkdir -p "$BUILD_ROOT"
+mkdir -p "$ARTIFACT_DIR"
 
 if [[ ! -x "$VENV_DIR/bin/python" ]]; then
   "$PYTHON_BIN" -m venv "$VENV_DIR"
@@ -94,6 +98,7 @@ rsync -a --delete \
   --exclude 'zephyr/' \
   --exclude 'zmk/' \
   --exclude 'zmk-keyboard-totem/' \
+  --exclude 'zmk-auto-layer/' \
   "$CONFIG_REPO"/ "$BUILD_ROOT"/
 
 cd "$BUILD_ROOT"
@@ -120,9 +125,12 @@ fi
 
 for shield in "${SHIELDS[@]}"; do
   build_name="${shield/totem_/totem-}"
+  source_uf2="$BUILD_ROOT/build/$build_name/zephyr/zmk.uf2"
+  artifact_uf2="$ARTIFACT_DIR/$build_name.uf2"
   cmake_args=(
     "-DSHIELD=$shield"
     "-DZMK_CONFIG=$CONFIG_DIR"
+    "-DCMAKE_PREFIX_PATH=$BUILD_ROOT/zephyr"
   )
 
   if [[ -n "${ZMK_EXTRA_MODULES:-}" ]]; then
@@ -130,10 +138,12 @@ for shield in "${SHIELDS[@]}"; do
   fi
 
   "$WEST" build -p -d "build/$build_name" -b seeeduino_xiao_ble zmk/app -- "${cmake_args[@]}"
+  cp "$source_uf2" "$artifact_uf2"
 done
 
-echo "Build root: $BUILD_ROOT"
+echo "Disposable build root: $BUILD_ROOT"
+echo "Local artifact dir: $ARTIFACT_DIR"
 for shield in "${SHIELDS[@]}"; do
   build_name="${shield/totem_/totem-}"
-  echo "UF2: $BUILD_ROOT/build/$build_name/zephyr/zmk.uf2"
+  echo "UF2: $ARTIFACT_DIR/$build_name.uf2"
 done
