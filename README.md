@@ -1,20 +1,24 @@
 # zmk_workspace
 
-This repository is the main agent and documentation entrypoint for the Totem ZMK setup.
+This repository is the workspace root and the main agent and documentation entrypoint for the Totem ZMK setup.
 
-Agents should be launched from here so they start with the right project context, the right repo boundaries, and access to the sibling repos that actually contain the config, the pinned firmware source, and any out-of-tree modules.
+The repos that contain the config, the pinned firmware source, and any out-of-tree modules are cloned inside it as nested repos. Agents launched from here start with the right project context, the right repo boundaries, and access to all of them.
+
+## Setup
+
+```bash
+git clone https://github.com/fleetsing/zmk_workspace.git
+cd zmk_workspace
+./scripts/bootstrap-zmk-workspace.sh
+```
+
+The bootstrap script clones the pinned upstream `zmk` checkout and the `zmk_config` repo into the workspace and creates `zmk_modules/`.
 
 ## Normal startup
 
-The intended day-to-day flow is to `cd` into `zmk_workspace` and start your coding agent (Claude Code, Codex, or another `AGENTS.md`-aware tool) from there.
+`cd` into the workspace root and start your coding agent (Claude Code, Codex, or another `AGENTS.md`-aware tool) from there. Permission rules are anchored at the workspace root, so start sessions there rather than inside a nested repo.
 
-The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](docs/project-context.md). Per-tool adapters ([`.claude/settings.json`](.claude/settings.json), [`.codex/config.toml`](.codex/config.toml)) give sessions started here access to the sibling repos:
-
-- `../zmk_config`
-- `../zmk`
-- `../zmk_modules`
-
-`../zmk` stays readable, but both adapters ask for confirmation before editing it. See "Agent tooling" in [docs/project-context.md](docs/project-context.md) for which files are shared and which are tool-specific.
+The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](docs/project-context.md). The per-tool adapters ([`.claude/settings.json`](.claude/settings.json), [`.codex/config.toml`](.codex/config.toml)) let agents edit `zmk_config/` and `zmk_modules/`, and ask for confirmation before editing the pinned `zmk/` checkout. See "Agent tooling" in [docs/project-context.md](docs/project-context.md) for which files are shared and which are tool-specific.
 
 ## Scope
 
@@ -23,13 +27,15 @@ The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](
 - Do not store the actual keymap/config here
 - Do not store custom ZMK module source here
 
-## Sibling repos
+## Nested repos
 
 ```text
-../zmk           pinned upstream ZMK checkout
-../zmk_config    buildable user-config repo
-../zmk_modules   container for module repos
+zmk/           pinned upstream ZMK checkout
+zmk_config/    buildable user-config repo
+zmk_modules/   container for module repos
 ```
+
+Each is its own git repository, ignored by this repo. Run git commands inside the nested repo, for example `git -C zmk_config status`.
 
 ## Primary docs
 
@@ -39,15 +45,14 @@ The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](
 ## Helper scripts
 
 - [scripts/bootstrap-zmk-workspace.sh](scripts/bootstrap-zmk-workspace.sh)
-  - optional bootstrap helper that clones the pinned upstream `zmk` checkout and a `zmk_config` repo into the expected sibling layout
+  - clones the pinned upstream `zmk` checkout and a `zmk_config` repo into the workspace
 - [scripts/build-local-firmware.sh](scripts/build-local-firmware.sh)
   - disposable local Totem build wrapper for `zmk_config`
 
-Optional Codex launchers under [scripts/agents/](scripts/agents/) (other tools don't need a wrapper):
+Optional Codex launchers under [scripts/agents/](scripts/agents/). For daily work, plain `codex` from the workspace root is enough.
 
-- `codex-zmk`: daily config work with `zmk_config` and `zmk_modules` writable when present
-- `codex-zmk-ref`: also makes the pinned `../zmk` checkout writable for upstream reference work
-- `codex-zmk-live`: adds live web search and network access for research or upgrade sessions
+- `codex-zmk-ref`: makes the pinned `zmk/` checkout writable for upstream work
+- `codex-zmk-live`: also adds live web search and network access for research or upgrade sessions
 
 ## Current intent
 

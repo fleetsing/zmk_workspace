@@ -4,20 +4,22 @@ Read [docs/project-context.md](docs/project-context.md) before making substantia
 
 ## Working directory model
 
-- This repo, `zmk_workspace`, is the main agent entrypoint.
-- Normal agent sessions should start from the `zmk_workspace` directory itself.
-- Treat these sibling paths as in-scope project directories:
-  - `../zmk_config`
-  - `../zmk`
-  - `../zmk_modules`
+- This repo, `zmk_workspace`, is the workspace root and the main agent entrypoint.
+- Normal agent sessions should start from the workspace root itself. Tool permission rules are anchored there.
+- These nested directories are separate git repositories, ignored by this repo, and in scope for project work:
+  - `zmk_config/`
+  - `zmk/`
+  - `zmk_modules/`
+- Run git commands for a nested repo inside that repo (for example `git -C zmk_config status`), not from the root.
+- Searches from the root cover `zmk_config/` and `zmk_modules/` but skip `zmk/`. To search upstream ZMK, pass `zmk/` as the search path.
 - These instructions, `docs/project-context.md`, and `.agents/skills/` are shared by every coding agent. Tool-specific folders (`.claude/`, `.codex/`) hold only permissions and pointers, never project rules. See "Agent tooling" in `docs/project-context.md`.
 
 ## Repository boundaries
 
-- `../zmk` is a pinned upstream reference checkout.
-- Do not edit `../zmk` unless the task explicitly says to patch upstream ZMK itself.
-- Put keyboard-specific changes in `../zmk_config`.
-- Put reusable behaviors, drivers, shields, snippets, widgets, and other out-of-tree logic in module repos under `../zmk_modules`.
+- `zmk/` is a pinned upstream reference checkout.
+- Do not edit `zmk/` unless the task explicitly says to patch upstream ZMK itself.
+- Put keyboard-specific changes in `zmk_config/`.
+- Put reusable behaviors, drivers, shields, snippets, widgets, and other out-of-tree logic in module repos under `zmk_modules/`.
 
 ## Totem-specific policy
 
@@ -29,21 +31,21 @@ Read [docs/project-context.md](docs/project-context.md) before making substantia
 
 ## Keymap policy
 
-- Treat `../zmk_config/config/totem.keymap` as the editor-safe surface.
+- Treat `zmk_config/config/totem.keymap` as the editor-safe surface.
 - Keep layers, combos, conditional layers, and visually edited macros there when possible.
 - Avoid burying the keymap under heavy preprocessor aliasing if it would make Keymap Editor round-tripping fragile.
-- Keep `../zmk_config/config/totem.json` local and stable for layout metadata.
+- Keep `zmk_config/config/totem.json` local and stable for layout metadata.
 
 ## Build policy
 
-- Prefer GitHub Actions builds from `../zmk_config` for routine firmware generation.
-- Keep the workflow pin aligned with the ZMK pin in `../zmk_config/config/west.yml`.
+- Prefer GitHub Actions builds from `zmk_config/` for routine firmware generation.
+- Keep the workflow pin aligned with the ZMK pin in `zmk_config/config/west.yml`.
 - Use local builds mainly for CI debugging, module development, or migration work.
-- For local builds, prefer `./scripts/build-local-firmware.sh` from this repo so `../zmk_config` stays free of `.west/` workspace state.
-- The helper may keep its west workspace in a disposable temp location, but flashable UF2 files should land in a stable local folder under `zmk_workspace/artifacts/firmware/` unless a task explicitly overrides that path.
+- For local builds, prefer `./scripts/build-local-firmware.sh` from this repo so `zmk_config/` stays free of `.west/` workspace state.
+- The helper may keep its west workspace in a disposable temp location, but flashable UF2 files should land in a stable local folder under `artifacts/firmware/` unless a task explicitly overrides that path.
 
 ## Documentation policy
 
 - Project-level operating docs belong in this repo.
-- Repo-local config specifics belong in `../zmk_config`.
+- Repo-local config specifics belong in `zmk_config/`.
 - If you change pins, layout conventions, repo boundaries, or normal commands, update the workspace docs here and any affected repo-local docs.

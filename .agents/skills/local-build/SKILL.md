@@ -5,18 +5,18 @@ description: Use this when a task needs a local ZMK build, especially for CI deb
 
 ## Purpose
 
-Run or propose local build commands for the Totem workspace without treating `../zmk` as the place to store project-specific changes.
+Run or propose local build commands for the Totem workspace without treating `zmk` as the place to store project-specific changes.
 
 ## Assumptions
 
-- main agent repo: `../zmk_workspace`
-- upstream checkout: `../zmk`
-- config repo: `../zmk_config`
-- module repos: `../zmk_modules/*`
+- main agent repo: the workspace root (this repo)
+- upstream checkout: `zmk`
+- config repo: `zmk_config`
+- module repos: `zmk_modules/*`
 
 ## Canonical commands
 
-Run these from the `zmk_workspace` repo root.
+Run these from the workspace root.
 
 ### Build both halves
 
@@ -24,7 +24,7 @@ Run these from the `zmk_workspace` repo root.
 ./scripts/build-local-firmware.sh all
 ```
 
-Flashable outputs are copied to `zmk_workspace/artifacts/firmware/` by default.
+Flashable outputs are copied to `artifacts/firmware/` by default.
 
 ### Build one half
 
@@ -47,8 +47,8 @@ ZMK_ARTIFACT_DIR=$PWD/firmware ./scripts/build-local-firmware.sh all
 
 ## Rules
 
-- Do not treat local build success as permission to patch upstream `../zmk`.
-- If a feature is reusable or shield-specific, prefer creating or updating a module under `../zmk_modules`.
-- Keep the local build assumptions aligned with `../zmk_config/config/west.yml` and `../zmk_config/build.yaml`.
-- Prefer the workspace helper over running `west init` inside `../zmk_config`.
-- Treat the copied UF2 files under `zmk_workspace/artifacts/firmware/` as the normal local flashing outputs unless the task explicitly overrides the artifact directory.
+- Do not treat local build success as permission to patch upstream `zmk`.
+- If a feature is reusable or shield-specific, prefer creating or updating a module under `zmk_modules`.
+- Keep the local build assumptions aligned with `zmk_config/config/west.yml` and `zmk_config/build.yaml`.
+- Prefer the workspace helper over running `west init` inside `zmk_config`.
+- Treat the copied UF2 files under `artifacts/firmware/` as the normal local flashing outputs unless the task explicitly overrides the artifact directory.

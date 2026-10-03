@@ -1,0 +1,5 @@
+# Read by ripgrep-based search (Claude Code's Grep, rg in agent shells), not by git.
+# Re-include the nested repos that .gitignore hides, so searches from the root find them.
+# zmk/ stays excluded to keep upstream out of routine results; search it with an explicit path.
+!/zmk_config/
+!/zmk_modules/*

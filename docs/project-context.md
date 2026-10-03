@@ -14,22 +14,21 @@ Build and maintain a Totem keyboard setup with:
 ## Local workspace layout
 
 ```text
-<root>/
-  zmk/            # upstream ZMK, pinned, reference only
-  zmk_config/     # buildable user-config repo
-  zmk_workspace/  # main agent entrypoint and project docs
+zmk_workspace/    # this repo: workspace root, agent entrypoint, project docs
+  zmk/            # upstream ZMK, pinned, reference only (nested repo)
+  zmk_config/     # buildable user-config repo (nested repo)
   zmk_modules/    # container for separate module repos
 ```
 
-The root folder itself is a local umbrella workspace, not the main unit of version control. Its location varies per machine; scripts locate it relative to `zmk_workspace`.
+The nested repos are cloned inside the workspace and ignored by its `.gitignore`; each keeps its own history and remote. `zmk_modules/README.md` is tracked by the workspace; the module repos inside `zmk_modules/` are not. The workspace's location varies per machine; scripts locate everything relative to the workspace root.
 
 ## Agent startup model
 
-- Start your coding agent from the `zmk_workspace` directory.
-- Treat `zmk_workspace` as the main project repo for instructions and context.
-- Treat `../zmk_config`, `../zmk`, and `../zmk_modules` as sibling project directories that are part of the same working context.
-- Each supported agent tool has a small adapter in this repo that grants sibling access when the tool honors project-local configuration; see "Agent tooling" below.
-- `scripts/bootstrap-zmk-workspace.sh` can create the expected sibling layout from scratch when bootstrapping a new local workspace.
+- Start your coding agent from the workspace root.
+- Treat the workspace root as the main project repo for instructions and context.
+- Treat `zmk_config/`, `zmk/`, and `zmk_modules/` as nested project directories that are part of the same working context.
+- Run git commands for a nested repo inside that repo, not from the workspace root.
+- `scripts/bootstrap-zmk-workspace.sh` can clone the nested repos into a fresh workspace checkout.
 
 ## Agent tooling
 
@@ -40,17 +39,19 @@ Shared by every agent:
 - `AGENTS.md`: operating rules, read automatically by most coding agents
 - `docs/project-context.md`: this file
 - `.agents/skills/<name>/SKILL.md`: task skills; keep frontmatter to the portable `name` and `description` fields
+- `.ignore`: re-includes `zmk_config/` and `zmk_modules/` for ripgrep-based search (Claude Code's Grep, `rg` in agent shells), which would otherwise skip them because `.gitignore` hides them. `zmk/` stays excluded to keep upstream out of routine results.
 
 Per-tool adapters:
 
-- Claude Code: `CLAUDE.md` imports `AGENTS.md`; `.claude/settings.json` adds the sibling directories; `.claude/skills` is a symlink to `.agents/skills`.
-- Codex: reads `AGENTS.md` and `.agents/skills` natively; `.codex/config.toml` sets sandbox and approval defaults and the sibling writable roots (Codex requires absolute paths there, so other machines must edit them). `scripts/agents/codex-zmk`, `codex-zmk-ref`, and `codex-zmk-live` are optional launchers that compute sibling paths from the script location.
+- Claude Code: `CLAUDE.md` imports `AGENTS.md`; `.claude/skills` is a symlink to `.agents/skills`; `.claude/settings.json` holds the permission rules below. The nested repos are inside the project, so no extra directories are needed.
+- Codex: reads `AGENTS.md` and `.agents/skills` natively; `.codex/config.toml` defines the `zmk-workspace` permission profile below. `scripts/agents/codex-zmk-ref` and `codex-zmk-live` are optional launchers for upstream and research work.
 
-Guarding the pinned `../zmk` checkout:
+Guarding nested repos:
 
-- The rule itself lives in `AGENTS.md`. Each adapter also enforces it as "ask before editing", so upstream patches stay possible when a task explicitly calls for them.
-- Claude Code: `.claude/hooks/ask-before-editing-zmk.py` is a `PreToolUse` hook that prompts before any file edit under `../zmk`. A hook is used because Claude Code permission rules can't express a path relative to a sibling of the project; `Edit(/../zmk/**)` and `Edit(../zmk/**)` don't match. It covers the file-edit tools, not shell commands.
-- Codex: `../zmk` is not in the default writable roots, so the sandbox requires approval for writes there, including from shell commands. `codex-zmk-ref` and `codex-zmk-live` add it for upstream work.
+- The rules themselves live in `AGENTS.md`. The adapters enforce them as "ask first", so upstream patches stay possible when a task explicitly calls for them.
+- Claude Code: `"ask": ["Edit(/zmk/**)"]` prompts before file edits under `zmk/`. The leading `/` anchors at the session's starting directory, which is why sessions start at the workspace root. It covers the file-edit tools, not shell commands.
+- Codex: the `zmk-workspace` profile makes the workspace writable except `zmk/` and nested repos' `.git` directories, which are read-only. The OS sandbox enforces this for shell commands too, so writing there or committing in a nested repo needs approval, as at the workspace root. Codex only accepts exact paths for read-only entries, so add a line like `"zmk_modules/<name>/.git" = "read"` for each new module repo.
+- Codex upstream work: `codex-zmk-ref` switches to the plain `workspace-write` sandbox, which makes `zmk/` and nested `.git` directories writable. `codex-zmk-live` adds network access and live web search.
 
 Rules for adapters:
 
@@ -101,7 +102,7 @@ Owns:
 - local skills
 - helper scripts
 - project-level docs
-- the explanation of how the sibling repos fit together
+- the explanation of how the nested repos fit together
 
 ### `zmk_config`
 
@@ -198,21 +199,20 @@ Keep these stable unless intentionally changing the convention:
 
 ## Local build commands
 
-Canonical local verification path from `zmk_workspace`:
+Canonical local verification path, from the workspace root:
 
 ```bash
-cd zmk_workspace
 ./scripts/build-local-firmware.sh all
 ```
 
 What the helper does:
 
 - creates or reuses an isolated west workspace under `${TMPDIR:-/tmp}/zmk-local-build` unless `ZMK_BUILD_ROOT` is set
-- syncs the current `zmk_config` repo into that disposable workspace
+- syncs the nested `zmk_config` repo into that disposable workspace
 - installs `west`, `ninja`, `cmake`, and `pyelftools` into a local virtualenv
 - prepends that virtualenv to `PATH` so the helper uses the same local `west`, `ninja`, and `cmake`
 - runs `west update` and the Totem builds
-- copies the resulting UF2 files into `zmk_workspace/artifacts/firmware/` unless `ZMK_ARTIFACT_DIR` is set
+- copies the resulting UF2 files into `artifacts/firmware/` unless `ZMK_ARTIFACT_DIR` is set
 - auto-detects a Homebrew-style `arm-none-eabi-gcc` toolchain and exports `gnuarmemb` settings when possible
 
 Useful variants:
@@ -250,14 +250,14 @@ If a new warning appears beyond the above list, treat it as potentially meaningf
 
 ## What to read first for most tasks
 
-- `../zmk_config/build.yaml`
-- `../zmk_config/config/west.yml`
-- `../zmk_config/config/totem.keymap`
-- `../zmk_config/config/totem_left.conf`
-- `../zmk_config/config/totem_right.conf`
-- `../zmk_config/config/totem.json`
-- `../zmk_config/keymap_drawer.config.yaml`
-- `../zmk_config/docs/zmk-context.md`
+- `zmk_config/build.yaml`
+- `zmk_config/config/west.yml`
+- `zmk_config/config/totem.keymap`
+- `zmk_config/config/totem_left.conf`
+- `zmk_config/config/totem_right.conf`
+- `zmk_config/config/totem.json`
+- `zmk_config/keymap_drawer.config.yaml`
+- `zmk_config/docs/zmk-context.md`
 - this file
 
 ## Current workspace state

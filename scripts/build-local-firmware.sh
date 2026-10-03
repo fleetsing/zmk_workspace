@@ -5,9 +5,9 @@ usage() {
   cat <<'EOF'
 Usage: build-local-firmware.sh [left|right|all]
 
-Build the Totem firmware from the sibling zmk_config repo in a disposable west
-workspace. Flashable UF2 artifacts are copied into zmk_workspace/artifacts/firmware
-by default.
+Build the Totem firmware from the nested zmk_config repo in a disposable west
+workspace. Flashable UF2 artifacts are copied into artifacts/firmware in this
+workspace by default.
 
 Environment:
   ZMK_BUILD_ROOT      Override the disposable build workspace root.
@@ -20,8 +20,7 @@ EOF
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORKSPACE_REPO="$(cd "$SCRIPT_DIR/.." && pwd)"
-ROOT="$(cd "$WORKSPACE_REPO/.." && pwd)"
-CONFIG_REPO="$ROOT/zmk_config"
+CONFIG_REPO="$WORKSPACE_REPO/zmk_config"
 BUILD_ROOT="${ZMK_BUILD_ROOT:-${TMPDIR:-/tmp}/zmk-local-build}"
 ARTIFACT_DIR="${ZMK_ARTIFACT_DIR:-$WORKSPACE_REPO/artifacts/firmware}"
 VENV_DIR="$BUILD_ROOT/.venv"

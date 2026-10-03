@@ -1,6 +1,12 @@
 /artifacts/
 .DS_Store
 
+# Nested repos: each is its own git repository, cloned into this workspace.
+/zmk/
+/zmk_config/
+/zmk_modules/*
+!/zmk_modules/README.md
+
 # Agent tool state: commit shared project config only.
 /.codex/*
 !/.codex/config.toml

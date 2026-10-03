@@ -9,9 +9,9 @@ Protect the hybrid workflow: raw source editing, GitHub firmware builds, Keymap 
 
 ## Rules
 
-- Keep `../zmk_config/config/totem.keymap` as the editor-safe surface.
+- Keep `zmk_config/config/totem.keymap` as the editor-safe surface.
 - Prefer direct, readable devicetree bindings over heavy alias indirection.
-- Keep layout metadata in `../zmk_config/config/totem.json`.
+- Keep layout metadata in `zmk_config/config/totem.json`.
 - If a change becomes reusable or editor-hostile, move it into a module repo instead of growing the keymap complexity indefinitely.
 - Say explicitly when a change risks Keymap Editor round-tripping.
 
