@@ -46,6 +46,12 @@ Per-tool adapters:
 - Claude Code: `CLAUDE.md` imports `AGENTS.md`; `.claude/settings.json` adds the sibling directories; `.claude/skills` is a symlink to `.agents/skills`.
 - Codex: reads `AGENTS.md` and `.agents/skills` natively; `.codex/config.toml` sets sandbox and approval defaults and the sibling writable roots (Codex requires absolute paths there, so other machines must edit them). `scripts/agents/codex-zmk`, `codex-zmk-ref`, and `codex-zmk-live` are optional launchers that compute sibling paths from the script location.
 
+Guarding the pinned `../zmk` checkout:
+
+- The rule itself lives in `AGENTS.md`. Each adapter also enforces it as "ask before editing", so upstream patches stay possible when a task explicitly calls for them.
+- Claude Code: `.claude/hooks/ask-before-editing-zmk.py` is a `PreToolUse` hook that prompts before any file edit under `../zmk`. A hook is used because Claude Code permission rules can't express a path relative to a sibling of the project; `Edit(/../zmk/**)` and `Edit(../zmk/**)` don't match. It covers the file-edit tools, not shell commands.
+- Codex: `../zmk` is not in the default writable roots, so the sandbox requires approval for writes there, including from shell commands. `codex-zmk-ref` and `codex-zmk-live` add it for upstream work.
+
 Rules for adapters:
 
 - Never put project rules in a tool-specific folder. If a rule matters, it goes in `AGENTS.md` or this file.

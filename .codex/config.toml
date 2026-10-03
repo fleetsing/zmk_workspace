@@ -11,8 +11,8 @@ project_doc_max_bytes = 65536
 [sandbox_workspace_write]
 network_access = false
 # Codex requires absolute paths here. On another machine, edit these or use scripts/agents/codex-zmk*.
+# ../zmk is left out on purpose: edits there need approval unless started via codex-zmk-ref or codex-zmk-live.
 writable_roots = [
   "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_config",
-  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk",
   "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_modules",
 ]

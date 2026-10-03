@@ -14,7 +14,7 @@ The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](
 - `../zmk`
 - `../zmk_modules`
 
-See "Agent tooling" in [docs/project-context.md](docs/project-context.md) for which files are shared and which are tool-specific.
+`../zmk` stays readable, but both adapters ask for confirmation before editing it. See "Agent tooling" in [docs/project-context.md](docs/project-context.md) for which files are shared and which are tool-specific.
 
 ## Scope
 
