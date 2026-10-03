@@ -78,7 +78,7 @@ export PATH="$VENV_DIR/bin:$PATH"
 
 if [[ "${ZMK_SKIP_PIP:-0}" != "1" ]]; then
   "$PIP" install --quiet --upgrade pip
-  "$PIP" install --quiet west ninja pyelftools
+  "$PIP" install --quiet west ninja cmake pyelftools
 elif [[ ! -x "$WEST" ]]; then
   WEST="$(command -v west || true)"
 fi

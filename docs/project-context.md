@@ -209,8 +209,8 @@ What the helper does:
 
 - creates or reuses an isolated west workspace under `${TMPDIR:-/tmp}/zmk-local-build` unless `ZMK_BUILD_ROOT` is set
 - syncs the current `zmk_config` repo into that disposable workspace
-- installs `west`, `ninja`, and `pyelftools` into a local virtualenv
-- prepends that virtualenv to `PATH` so the helper uses the same local `west` and `ninja`
+- installs `west`, `ninja`, `cmake`, and `pyelftools` into a local virtualenv
+- prepends that virtualenv to `PATH` so the helper uses the same local `west`, `ninja`, and `cmake`
 - runs `west update` and the Totem builds
 - copies the resulting UF2 files into `zmk_workspace/artifacts/firmware/` unless `ZMK_ARTIFACT_DIR` is set
 - auto-detects a Homebrew-style `arm-none-eabi-gcc` toolchain and exports `gnuarmemb` settings when possible
