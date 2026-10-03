@@ -12,7 +12,7 @@ cd zmk_workspace
 ./scripts/bootstrap-zmk-workspace.sh
 ```
 
-The bootstrap script clones the pinned upstream `zmk` checkout and the `zmk_config` repo into the workspace and creates `zmk_modules/`.
+The bootstrap script clones the pinned upstream `zmk` checkout and the `zmk_config` repo into the workspace and creates `zmk_modules/`. It checks out `zmk_config` on `dev`, the working branch; set `ZMK_CONFIG_REF` to pick another branch.
 
 ## Normal startup
 

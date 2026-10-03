@@ -28,7 +28,7 @@ The nested repos are cloned inside the workspace and ignored by its `.gitignore`
 - Treat the workspace root as the main project repo for instructions and context.
 - Treat `zmk_config/`, `zmk/`, and `zmk_modules/` as nested project directories that are part of the same working context.
 - Run git commands for a nested repo inside that repo, not from the workspace root.
-- `scripts/bootstrap-zmk-workspace.sh` can clone the nested repos into a fresh workspace checkout.
+- `scripts/bootstrap-zmk-workspace.sh` can clone the nested repos into a fresh workspace checkout. It checks out `zmk_config` on `dev` unless `ZMK_CONFIG_REF` names another branch.
 
 ## Agent tooling
 
@@ -62,7 +62,7 @@ Rules for adapters:
 ## Repo origins
 
 - `zmk`: `https://github.com/zmkfirmware/zmk`
-- `zmk_config`: `https://github.com/fleetsing/zmk_config`
+- `zmk_config`: `https://github.com/fleetsing/zmk_config`, worked on in the `dev` branch; its `main` branch still holds the initial starter config
 - `zmk_workspace`: `https://github.com/fleetsing/zmk_workspace`
 
 Each module under `zmk_modules/` should have its own repository.
