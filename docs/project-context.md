@@ -14,23 +14,43 @@ Build and maintain a Totem keyboard setup with:
 ## Local workspace layout
 
 ```text
-~/zmk/
+<root>/
   zmk/            # upstream ZMK, pinned, reference only
   zmk_config/     # buildable user-config repo
-  zmk_workspace/  # main Codex entrypoint and project docs
+  zmk_workspace/  # main agent entrypoint and project docs
   zmk_modules/    # container for separate module repos
 ```
 
-The root folder itself is a local umbrella workspace, not the main unit of version control.
+The root folder itself is a local umbrella workspace, not the main unit of version control. Its location varies per machine; scripts locate it relative to `zmk_workspace`.
 
 ## Agent startup model
 
-- Start Codex from the `zmk_workspace` directory.
+- Start your coding agent from the `zmk_workspace` directory.
 - Treat `zmk_workspace` as the main project repo for instructions and context.
 - Treat `../zmk_config`, `../zmk`, and `../zmk_modules` as sibling project directories that are part of the same working context.
-- The local Codex configuration in `zmk_workspace/.codex/config.toml` is intended to grant normal sessions started here write access to those sibling directories when the client honors project-local configuration.
-- The helper launch scripts in `zmk_workspace/scripts/` are optional conveniences, not the primary workflow.
+- Each supported agent tool has a small adapter in this repo that grants sibling access when the tool honors project-local configuration; see "Agent tooling" below.
 - `scripts/bootstrap-zmk-workspace.sh` can create the expected sibling layout from scratch when bootstrapping a new local workspace.
+
+## Agent tooling
+
+The project is agent-agnostic. Shared files hold the project rules; tool-specific folders hold only tool settings and pointers.
+
+Shared by every agent:
+
+- `AGENTS.md`: operating rules, read automatically by most coding agents
+- `docs/project-context.md`: this file
+- `.agents/skills/<name>/SKILL.md`: task skills; keep frontmatter to the portable `name` and `description` fields
+
+Per-tool adapters:
+
+- Claude Code: `CLAUDE.md` imports `AGENTS.md`; `.claude/settings.json` adds the sibling directories; `.claude/skills` is a symlink to `.agents/skills`.
+- Codex: reads `AGENTS.md` and `.agents/skills` natively; `.codex/config.toml` sets sandbox and approval defaults and the sibling writable roots (Codex requires absolute paths there, so other machines must edit them). `scripts/agents/codex-zmk`, `codex-zmk-ref`, and `codex-zmk-live` are optional launchers that compute sibling paths from the script location.
+
+Rules for adapters:
+
+- Never put project rules in a tool-specific folder. If a rule matters, it goes in `AGENTS.md` or this file.
+- Machine-local or personal tool state (credentials, history, `.claude/settings.local.json`, model choice) stays out of version control.
+- When adding another tool, add a thin adapter that points at the shared files rather than copying them.
 
 ## Repo origins
 
@@ -54,7 +74,7 @@ Each module under `zmk_modules/` should have its own repository.
 - Each half also has one extra outer key beyond the normal pinky column.
 - The two inner columns are intended for the index finger, then middle, ring, and pinky moving outward.
 - The outer extra key on each half is also a pinky key.
-- See [totem_physical_layout.png](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/totem_physical_layout.png) for the reference image that explains the geometry better than the raw matrix alone.
+- See [totem_physical_layout.png](../totem_physical_layout.png) for the reference image that explains the geometry better than the raw matrix alone.
 - In `config/totem.keymap`, key positions are numbered sequentially in matrix order. This matters for positional hold-taps such as home-row mods.
 
 ## Host OS
@@ -175,7 +195,7 @@ Keep these stable unless intentionally changing the convention:
 Canonical local verification path from `zmk_workspace`:
 
 ```bash
-cd ~/zmk/zmk_workspace
+cd zmk_workspace
 ./scripts/build-local-firmware.sh all
 ```
 

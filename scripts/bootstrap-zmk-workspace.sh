@@ -8,7 +8,6 @@ CONFIG_REPO_URL="${2:-https://github.com/fleetsing/zmk_config.git}"
 ZMK_REF="${ZMK_REF:-v0.3}"
 ZMK_REPO_URL="${ZMK_REPO_URL:-https://github.com/zmkfirmware/zmk.git}"
 
-mkdir -p "$ROOT"/zmk_workspace/.codex
 mkdir -p "$ROOT"/zmk_workspace/scripts
 mkdir -p "$ROOT"/zmk_modules
 
@@ -36,8 +35,9 @@ Next steps:
        $ROOT/zmk_workspace/docs/project-context.md
        $ROOT/zmk_config/config/west.yml
        $ROOT/zmk_config/build.yaml
-  3. Start Codex with:
-       $ROOT/zmk_workspace/scripts/codex-zmk
+  3. Start your coding agent from:
+       $ROOT/zmk_workspace
+     See "Agent tooling" in docs/project-context.md for per-tool setup.
   4. Verify the local build path with:
        $ROOT/zmk_workspace/scripts/build-local-firmware.sh all
 EOF

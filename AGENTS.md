@@ -1,6 +1,6 @@
 # ZMK Workspace Agent Rules
 
-Read [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/docs/project-context.md) before making substantial changes.
+Read [docs/project-context.md](docs/project-context.md) before making substantial changes.
 
 ## Working directory model
 
@@ -10,7 +10,7 @@ Read [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zm
   - `../zmk_config`
   - `../zmk`
   - `../zmk_modules`
-- If the local Codex client honors `zmk_workspace/.codex/config.toml`, those sibling directories should be writable roots for a normal session started here.
+- These instructions, `docs/project-context.md`, and `.agents/skills/` are shared by every coding agent. Tool-specific folders (`.claude/`, `.codex/`) hold only permissions and pointers, never project rules. See "Agent tooling" in `docs/project-context.md`.
 
 ## Repository boundaries
 

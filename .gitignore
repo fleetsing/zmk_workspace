@@ -1,2 +1,7 @@
 /artifacts/
 .DS_Store
+
+# Agent tool state: commit shared project config only.
+/.codex/*
+!/.codex/config.toml
+/.claude/settings.local.json

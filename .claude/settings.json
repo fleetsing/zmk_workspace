@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "../zmk_config",
+      "../zmk",
+      "../zmk_modules"
+    ]
+  }
+}

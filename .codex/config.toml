@@ -1,28 +1,16 @@
-# Dedicated Codex home for the ZMK workspace.
-# Keep project rules in ../AGENTS.md and ../docs/project-context.md.
+# Codex project config for the ZMK workspace.
+# Loaded on top of ~/.codex/config.toml when this repo is trusted.
+# Project rules live in ../AGENTS.md and ../docs/project-context.md, not here.
+# Codex ignores `profiles` in project config; see scripts/agents/codex-zmk-live for the research setup.
 
-model = "gpt-5.4"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 web_search = "cached"
 project_doc_max_bytes = 65536
-file_opener = "vscode"
 
 [sandbox_workspace_write]
 network_access = false
-writable_roots = [
-  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_config",
-  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk",
-  "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_modules",
-]
-
-[profiles.zmk-research]
-web_search = "live"
-approval_policy = "on-request"
-sandbox_mode = "workspace-write"
-
-[profiles.zmk-research.sandbox_workspace_write]
-network_access = true
+# Codex requires absolute paths here. On another machine, edit these or use scripts/agents/codex-zmk*.
 writable_roots = [
   "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_config",
   "/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk",

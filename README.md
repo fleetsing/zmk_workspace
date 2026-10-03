@@ -1,18 +1,20 @@
 # zmk_workspace
 
-This repository is the main Codex and documentation entrypoint for the Totem ZMK setup.
+This repository is the main agent and documentation entrypoint for the Totem ZMK setup.
 
 Agents should be launched from here so they start with the right project context, the right repo boundaries, and access to the sibling repos that actually contain the config, the pinned firmware source, and any out-of-tree modules.
 
 ## Normal startup
 
-The intended day-to-day flow is to `cd` into `zmk_workspace` and start `codex` normally from there.
+The intended day-to-day flow is to `cd` into `zmk_workspace` and start your coding agent (Claude Code, Codex, or another `AGENTS.md`-aware tool) from there.
 
-The critical rules live in [AGENTS.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/AGENTS.md) and [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/docs/project-context.md). The local Codex config in [`.codex/config.toml`](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/.codex/config.toml) is set up so that, when honored by the client, sibling access includes:
+The critical rules live in [AGENTS.md](AGENTS.md) and [docs/project-context.md](docs/project-context.md). Per-tool adapters ([`.claude/settings.json`](.claude/settings.json), [`.codex/config.toml`](.codex/config.toml)) give sessions started here access to the sibling repos:
 
 - `../zmk_config`
 - `../zmk`
 - `../zmk_modules`
+
+See "Agent tooling" in [docs/project-context.md](docs/project-context.md) for which files are shared and which are tool-specific.
 
 ## Scope
 
@@ -31,21 +33,21 @@ The critical rules live in [AGENTS.md](/Users/jarnolouhelainen/Projects/keyboard
 
 ## Primary docs
 
-- [AGENTS.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/AGENTS.md)
-- [docs/project-context.md](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/docs/project-context.md)
+- [AGENTS.md](AGENTS.md)
+- [docs/project-context.md](docs/project-context.md)
 
 ## Helper scripts
 
-- [scripts/bootstrap-zmk-workspace.sh](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/scripts/bootstrap-zmk-workspace.sh)
+- [scripts/bootstrap-zmk-workspace.sh](scripts/bootstrap-zmk-workspace.sh)
   - optional bootstrap helper that clones the pinned upstream `zmk` checkout and a `zmk_config` repo into the expected sibling layout
-- [scripts/codex-zmk](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/scripts/codex-zmk)
-  - optional wrapper for normal daily config work with `zmk_config` and `zmk_modules` added as sibling dirs when present
-- [scripts/codex-zmk-ref](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/scripts/codex-zmk-ref)
-  - optional wrapper that also adds the pinned `../zmk` checkout for upstream reference work
-- [scripts/codex-zmk-live](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/scripts/codex-zmk-live)
-  - optional wrapper that starts the `zmk-research` profile for research or upgrade sessions that need network access
-- [scripts/build-local-firmware.sh](/Users/jarnolouhelainen/Projects/keyboards/zmk/zmk_workspace/scripts/build-local-firmware.sh)
+- [scripts/build-local-firmware.sh](scripts/build-local-firmware.sh)
   - disposable local Totem build wrapper for `zmk_config`
+
+Optional Codex launchers under [scripts/agents/](scripts/agents/) (other tools don't need a wrapper):
+
+- `codex-zmk`: daily config work with `zmk_config` and `zmk_modules` writable when present
+- `codex-zmk-ref`: also makes the pinned `../zmk` checkout writable for upstream reference work
+- `codex-zmk-live`: adds live web search and network access for research or upgrade sessions
 
 ## Current intent
 

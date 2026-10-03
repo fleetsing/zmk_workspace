@@ -16,19 +16,19 @@ Run or propose local build commands for the Totem workspace without treating `..
 
 ## Canonical commands
 
+Run these from the `zmk_workspace` repo root.
+
 ### Build both halves
 
 ```bash
-cd ~/zmk/zmk_workspace
 ./scripts/build-local-firmware.sh all
 ```
 
-Flashable outputs are copied to `~/zmk/zmk_workspace/artifacts/firmware/` by default.
+Flashable outputs are copied to `zmk_workspace/artifacts/firmware/` by default.
 
 ### Build one half
 
 ```bash
-cd ~/zmk/zmk_workspace
 ./scripts/build-local-firmware.sh left
 ./scripts/build-local-firmware.sh right
 ```
@@ -36,14 +36,12 @@ cd ~/zmk/zmk_workspace
 ### Reuse an existing fetched workspace
 
 ```bash
-cd ~/zmk/zmk_workspace
 ZMK_SKIP_UPDATE=1 ./scripts/build-local-firmware.sh all
 ```
 
 ### Override the artifact folder
 
 ```bash
-cd ~/zmk/zmk_workspace
 ZMK_ARTIFACT_DIR=$PWD/firmware ./scripts/build-local-firmware.sh all
 ```
 
