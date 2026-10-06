@@ -178,7 +178,7 @@ To preserve it:
 - The live keymap keeps a larger set of inline behaviors than the older docs described:
   `Meh` and `Hyper` macros, left/right home-row hold-taps, left/right bottom-row `Meh`/`Hyper` hold-taps, `lts`, `ss`, `htc`, `nav_word`, and the transparent-hold helpers `mht`, `hypht`, and `mehht`.
 - Hold-tap tuning is split by role rather than shared globally:
-  the home-row and bottom-row modifier helpers use `balanced`, `quick-tap-ms = 175`, `require-prior-idle-ms = 150`, `retro-tap`, and `hold-trigger-on-release`, while `htc` and the transparent-hold helpers have their own tighter tap-preferred or tap-unless-interrupted tuning.
+  the home-row and bottom-row modifier helpers use `balanced`, `quick-tap-ms = 300`, `require-prior-idle-ms = 150`, `retro-tap`, and `hold-trigger-on-release`, the thumb `&lt` keys override the default with `quick-tap-ms = 300` for tap-key repeat, while `htc` and the transparent-hold helpers have their own tighter tap-preferred or tap-unless-interrupted tuning.
 - The layer stack now includes dedicated utility layers beyond the older summary:
   `Media` for host media controls, `Mouse` for pointer and scroll actions, and `Board` for Bluetooth selection and output switching.
 - `config/totem_left.conf` disables USB logging and enables the central-side BLE battery reporting settings used by host-side battery apps.
